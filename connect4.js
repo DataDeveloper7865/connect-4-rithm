@@ -28,6 +28,7 @@ function makeBoard() {
 
 function makeHtmlBoard() {
   // TODO: get "htmlBoard" variable from the item in HTML w/ID of "board"
+  let htmlBoard = document.querySelector("#board");
 
   //set up and listen for clicks on top row
   let top = document.createElement("tr");
@@ -46,19 +47,16 @@ function makeHtmlBoard() {
   // uses HEIGHT to create table rows
   // uses WIDTH to create table cells for each row
   for (var y = 0; y < HEIGHT; y++) {
-    // TODO: Create a table row element and assign to a "row" variable
+    let row = document.createElement("tr");
+    row.setAttribute("id", y);
+
 
     for (var x = 0; x < WIDTH; x++) {
-      // TODO: Create a table cell element and assign to a "cell" variable
-
-      // TODO: add an id, y-x, to the above table cell element
-      // you'll use this later, so make sure you use y-x
-
-      // TODO: append the table cell to the table row
-
+      let cell = document.createElement("td");
+      cell.setAttribute("id",`${y}-${x}`);
+      row.append(cell);
     }
-    // TODO: append the row to the html board
-
+    htmlBoard.append(row);
   }
 }
 
