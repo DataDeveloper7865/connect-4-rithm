@@ -27,7 +27,6 @@ function makeBoard() {
 /** makeHtmlBoard: make HTML table and row of column tops. */
 
 function makeHtmlBoard() {
-  // TODO: get "htmlBoard" variable from the item in HTML w/ID of "board"
   let htmlBoard = document.querySelector("#board");
 
   //set up and listen for clicks on top row
@@ -38,7 +37,7 @@ function makeHtmlBoard() {
   // adding id to top row for listening for event clicks
   for (var x = 0; x < WIDTH; x++) {
     var headCell = document.createElement("td");
-    headCell.setAttribute("id", x);
+    headCell.setAttribute("id", `topRow${x}`);
     top.append(headCell);
   }
   htmlBoard.append(top);
@@ -48,7 +47,7 @@ function makeHtmlBoard() {
   // uses WIDTH to create table cells for each row
   for (var y = 0; y < HEIGHT; y++) {
     let row = document.createElement("tr");
-    row.setAttribute("id", y);
+    row.setAttribute("id", `row${y}`);
 
 
     for (var x = 0; x < WIDTH; x++) {
@@ -71,6 +70,13 @@ function findSpotForCol(x) {
 
 function placeInTable(y, x) {
   // TODO: make a div and insert into correct table cell
+  let currentPiece = document.createElement("div");
+  currentPiece.setAttribute("class", "piece");
+  currentPiece.setAttribute("class", `p${currPlayer}`);
+
+  let targetCell = document.getElementById(`${y}-${x}`);
+  targetCell.append(currentPiece);
+  board[y][x] = currPlayer;
 }
 
 /** endGame: announce game end */
@@ -83,7 +89,7 @@ function endGame(msg) {
 
 function handleClick(evt) {
   // get x from ID of clicked cell
-  let x = +evt.target.id;
+  let x = +evt.target.id[6];
 
   // get next spot in column (if none, ignore click)
   let y = findSpotForCol(x);
@@ -95,6 +101,7 @@ function handleClick(evt) {
   // TODO: add line to update in-memory board
   placeInTable(y, x);
 
+
   // check for win
   if (checkForWin()) {
     return endGame(`Player ${currPlayer} won!`);
@@ -102,9 +109,13 @@ function handleClick(evt) {
 
   // check for tie
   // TODO: check if all cells in board are filled; if so call, call endGame
+    if (board[0].every(cell => cell !== null)){
+      endGame();
+    }
+  }
 
   // switch players
-  // TODO: switch currPlayer 1 <-> 2
+  currPlayer === 1 ? 2 : 1;
 }
 
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
