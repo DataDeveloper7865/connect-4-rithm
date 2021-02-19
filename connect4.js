@@ -63,7 +63,13 @@ function makeHtmlBoard() {
 
 function findSpotForCol(x) {
   // TODO: write the real version of this, rather than always returning 0
-  return 0;
+  for (let i = board.length-1; i >= 0; i--) {
+    if (board[i][x] === null) {
+      return i
+    }
+  }
+  //it returns null when the top row is full
+  return null;
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
@@ -72,7 +78,7 @@ function placeInTable(y, x) {
   // TODO: make a div and insert into correct table cell
   let currentPiece = document.createElement("div");
   currentPiece.setAttribute("class", "piece");
-  currentPiece.setAttribute("class", `p${currPlayer}`);
+  currentPiece.classList.add(`p${currPlayer}`)
 
   let targetCell = document.getElementById(`${y}-${x}`);
   targetCell.append(currentPiece);
@@ -83,6 +89,7 @@ function placeInTable(y, x) {
 
 function endGame(msg) {
   // TODO: pop up alert message
+  alert(msg);
 }
 
 /** handleClick: handle click of column top to play piece */
@@ -101,7 +108,6 @@ function handleClick(evt) {
   // TODO: add line to update in-memory board
   placeInTable(y, x);
 
-
   // check for win
   if (checkForWin()) {
     return endGame(`Player ${currPlayer} won!`);
@@ -109,13 +115,12 @@ function handleClick(evt) {
 
   // check for tie
   // TODO: check if all cells in board are filled; if so call, call endGame
-    if (board[0].every(cell => cell !== null)){
-      endGame();
-    }
+  if (board[0].every(cell => cell !== null)){
+    endGame();
   }
 
   // switch players
-  currPlayer === 1 ? 2 : 1;
+  currPlayer = currPlayer === 1 ? 2 : 1;
 }
 
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
@@ -132,6 +137,25 @@ function checkForWin() {
     // TODO: Check four cells to see if they're all legal & all color of current
     // player
 
+
+    //check for out of bounds,if out of bounds return false
+    for (let cell of cells) {
+      if (cell[0] < 0 || cell[0] >= HEIGHT) {
+        return false
+      } else if (cell[1] < 0 || cell[1] >= WIDTH ){
+        return false
+      }
+    }
+
+    //make more readable
+    for (let idx = 0; idx < cells.length; idx++) {
+      //this is getting value at 0th index because, all should be same in array
+      let baseCheck = board[cells[0][0]][cells[0][1]]
+      if (board[cells[idx][0]][cells[idx][1]] !== baseCheck || board[cells[idx][0]][cells[idx][1]] === null) {
+        return false
+      }
+    }
+    return true 
   }
 
   // using HEIGHT and WIDTH, generate "check list" of coordinates
@@ -142,12 +166,13 @@ function checkForWin() {
       // TODO: assign values to the below variables for each of the ways to win
       // horizontal has been assigned for you
       // each should be an array of 4 cell coordinates:
-      // [ [y, x], [y, x], [y, x], [y, x] ]
+      // let horiz =  [ [y, x], [y, x], [y, x], [y, x] ]
 
-      let horiz = [[y, x], [y, x + 1], [y, x + 2], [y, x + 3]];
-      let vert;
-      let diagDL;
-      let diagDR;
+      let horiz = [[y, x], [y, x+1], [y, x+2], [y, x+3]] 
+      let vert = [[y, x], [y+1, x], [y+2, x], [y+3, x]] 
+      let diagDL = [[y, x], [y+1, x+1], [y+2, x+2], [y+3, x+3]] 
+      let diagDR = [[y, x], [y-1, x+1], [y-2, x+2], [y-3, x+3]] 
+
 
       // find winner (only checking each win-possibility as needed)
       if (_win(horiz) || _win(vert) || _win(diagDR) || _win(diagDL)) {
